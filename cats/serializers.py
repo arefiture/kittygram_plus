@@ -11,12 +11,12 @@ class AchievementSerializer(serializers.ModelSerializer):
 
 
 class CatSerializer(serializers.ModelSerializer):
-    owner = serializers.StringRelatedField(read_only=True)
-    achievement = AchievementSerializer(many=True)
+    # owner = serializers.StringRelatedField(read_only=True)
+    achievements = AchievementSerializer(many=True)
 
     class Meta:
         model = Cat
-        fields = ('id', 'name', 'color', 'birth_year', 'owner')
+        fields = ('id', 'name', 'color', 'birth_year', 'owner', 'achievements')
 
     def create(self, validated_data):
         # Убираем из общего словаря достижения и сохраняем его
@@ -31,8 +31,9 @@ class CatSerializer(serializers.ModelSerializer):
             )
             # И привяжем достижения к котику и наоборот =3
             AchievementCat.objects.create(
-                achivement=current_achievement, cat=cat
+                achievement=current_achievement, cat=cat
             )
+        return cat
 
 
 class OwnerSerializer(serializers.ModelSerializer):
