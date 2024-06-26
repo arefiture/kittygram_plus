@@ -24,10 +24,11 @@ class Hex2NameColor(serializers.Field):
 
 
 class AchievementSerializer(serializers.ModelSerializer):
+    achievement_name = serializers.CharField(source='name')
 
     class Meta:
         model = Achievement
-        fields = ('id', 'name')
+        fields = ('id', 'achievement_name')
 
 
 class CatSerializer(serializers.ModelSerializer):
