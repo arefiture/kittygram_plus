@@ -3,7 +3,7 @@ import datetime as dt
 import webcolors
 from rest_framework import serializers
 
-from .models import Achievement, AchievementCat, Cat, Owner
+from .models import Achievement, AchievementCat, Cat, CHOICES, Owner
 
 
 # Создаем наш новый тип
@@ -35,7 +35,7 @@ class CatSerializer(serializers.ModelSerializer):
     # owner = serializers.StringRelatedField(read_only=True)
     achievements = AchievementSerializer(many=True, required=False)
     age = serializers.SerializerMethodField()
-    color = Hex2NameColor()
+    color = serializers.ChoiceField(choices=CHOICES)
 
     class Meta:
         model = Cat
