@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Achievement, Cat, Owner
+from .models import Achievement, AchievementCat, Cat, Owner
 
 
 class AchievementSerializer(serializers.ModelSerializer):
@@ -12,11 +12,27 @@ class AchievementSerializer(serializers.ModelSerializer):
 
 class CatSerializer(serializers.ModelSerializer):
     owner = serializers.StringRelatedField(read_only=True)
-    achievement = AchievementSerializer(read_only=True, many=True)
+    achievement = AchievementSerializer(many=True)
 
     class Meta:
         model = Cat
         fields = ('id', 'name', 'color', 'birth_year', 'owner')
+
+    def create(self, validated_data):
+        # Убираем из общего словаря достижения и сохраняем его
+        achievements = validated_data.pop('achievements')
+        # Создаем кота
+        cat = Cat.objects.create(**validated_data)
+        # Для каждого достижения из списка
+        for achivement in achievements:
+            # Создадим новую запись или получим существующую
+            current_achievement, status = Achievement.objects.get_or_create(
+                **achivement
+            )
+            # И привяжем достижения к котику и наоборот =3
+            AchievementCat.objects.create(
+                achivement=current_achievement, cat=cat
+            )
 
 
 class OwnerSerializer(serializers.ModelSerializer):
